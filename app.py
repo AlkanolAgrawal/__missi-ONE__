@@ -13,19 +13,20 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template('index.html')
-@app.route('/predict', methods=['GET', 'POST'])
-def predict():
+
+@app.route('/recommend', methods=['GET', 'POST'])
+def recommend():
     if request.method=='GET':
-        return render_template('predict.html')
+        return render_template('recommend.html')
     else:
         data = CustomData(
-            gender=request.form.get('gender'),
-            reading_score=float(request.form.get('reading_score')),
-            parental_level_of_education=request.form.get('parental_level_of_education'),
-            writing_score=float(request.form.get('writing_score')),
-            test_preparation_course=request.form.get('test_preparation_course'),
-            race_ethnicity=request.form.get('race_ethnicity'),
-            lunch=request.form.get('lunch'),
+            genre=request.form.get('genre'),
+            duration=float(request.form.get('duration')),
+            director=request.form.get('director'),
+            year=int(request.form.get('year')),
+            rating=request.form.get('rating'),
+            budget=float(request.form.get('budget')),
+            language=request.form.get('language'),
         )
         pred_df = data.get_data_as_dataframe()
         print("Pred DF columns:", pred_df.columns.tolist())  # Debug columns
@@ -33,7 +34,7 @@ def predict():
         predicting = PredictPipeline()
         results = predicting.prediction(pred_df)
 
-        return render_template('predict.html', prediction=results)
+        return render_template('recommend.html', recommendation_score=results[0])
     
 
 if __name__ == "__main__":
